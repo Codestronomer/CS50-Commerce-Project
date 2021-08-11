@@ -20,7 +20,6 @@ class AuctionListing(models.Model):
     description = models.TextField()
     image_url = models.CharField(max_length=300)
     category = models.CharField(max_length=200)
-    price = models.FloatField()
     created = models.DateTimeField(auto_now_add=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name='watch_listings')
     bid = models.ForeignKey(Bid, on_delete=models.CASCADE, related_name='auction_listings', blank=True)
