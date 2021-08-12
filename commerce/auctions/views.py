@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.views.generic import FormView
+from django.views.generic import FormView, ListView, DetailView
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -7,10 +7,6 @@ from django.urls import reverse
 from .forms import AuctionListingForm
 
 from .models import User, AuctionListing, Comment, Bid
-
-
-def index(request):
-    return render(request, "auctions/index.html", {"AuctionListing": AuctionListing})
 
 
 def login_view(request):
@@ -68,3 +64,20 @@ def register(request):
 class CreateListing(FormView):
     form_class = AuctionListingForm
     template_name = "auctions/create_listing.html"
+    success_url = '/'
+
+    def form_valid(self, form):
+        form.save(commit=False)
+        form.instance.owner = self.request.user
+        form.save()
+
+
+class AuctionListingsView(ListView):
+    model = AuctionListing
+    template_name = "auctions/index.html"
+    context_object_name = "listings"
+
+
+class AuctionListingView(DetailView):
+    model = AuctionListing
+    template_name = "auctions/detail.html"

@@ -22,7 +22,7 @@ class AuctionListing(models.Model):
     category = models.CharField(max_length=200)
     created = models.DateTimeField(auto_now_add=True)
     watchlist = models.ManyToManyField(User, blank=True, related_name='watch_listings')
-    bid = models.ForeignKey(Bid, on_delete=models.CASCADE, related_name='auction_listings', blank=True)
+    starting_bid = models.FloatField()
     is_closed = models.BooleanField(default=False)
 
     def __str__(self):
