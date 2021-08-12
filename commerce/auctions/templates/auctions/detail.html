@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ object.name }}</title>
+    <title>{% block title %}{{ object.item }}{% endblock %}</title>
 </head>
 <body>
+    {% block body %}
+        {{ object.item }}
+        {{ object.description }}
+
+    {% endblock %}
 
 </body>
 </html>

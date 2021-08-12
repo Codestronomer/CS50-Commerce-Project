@@ -1,25 +1,38 @@
 {% extends "auctions/layout.html" %}
+<style>
+    a {
+        text-decoration: None;
+        }
+    @media only screen and (max-width: 500px) {
+                .img-fluid {
+                    width:500%;
+                    height:100px;
+                    }
+                }
+</style>
 
 {% block body %}
     <h2>Active Listings</h2>
-    {% for obj in listings %}
+    <div class="container">
         <div class="row">
+            {% for obj in listings %}
             <div class="col-3">
-                <div class="card">
-                    <div class="card-img">
-                        <img src="{{ obj.image_url }}" alt="" />
+                <div class="card" style="height:27rem">
+                    <div class="card-img-top">
+                        <img src="{{ obj.image_url }}" alt="" class="img-fluid" style="height:250px; width:100%;/>
                     </div>
                     <div class="card-body">
-                        <p>{{ obj.item }}</p>
-                        <span>{{ obj.category }}</span>
-                        <p>{{ obj.description }}</p>
-                        <span>{{ obj.starting_bid }}</span>
+                        <div class="container">
+                            <h3 class="card-title"><a href="{% url 'detail' obj.pk %}">{{ obj.item|truncatechars:17 }}</a></h3>
+                            <span class="badge rounded-pill bg-dark">{{ obj.category }}</span>
+                            <p class="card-text">{{ obj.description|truncatechars:30 }}</p>
+                            <span class="badge bg-light text-dark">${{ obj.starting_bid }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
+        {% endfor %}
         </div>
-
-    {% endfor %}
-
+    </div>
     TODO
 {% endblock %}
