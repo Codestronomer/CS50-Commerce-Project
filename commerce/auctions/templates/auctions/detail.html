@@ -6,6 +6,11 @@
 </head>
 <body>
     {% block body %}
+        <form method="POST" action="add_to_watchlist">
+            {% csrf_token %}
+            {{ watchlist_form.as_p }}
+            <input type="submit" value="Add to Watchlist" />
+        </form>
         <img src="{{ object.image_url }}" alt="">
         <h2>{{ object.item }}</h2>
         <span class="badge rounded-pill bg-dark">{{ object.category }}</span>

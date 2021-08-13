@@ -4,9 +4,9 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .forms import AuctionListingForm, BidForm
+from .forms import AuctionListingForm, BidForm, WatchListForm
 
-from .models import User, AuctionListing, Comment, Bid
+from .models import User, AuctionListing, Comment, Bid, WatchList
 
 
 def login_view(request):
@@ -102,4 +102,19 @@ class AuctionListingView(DetailView):
 
 
 def watchlist(request):
-    pass
+    if request.user.is_authenticated:
+        my_watchlist = WatchList.objects.get(user=request.user)
+        return render(request, "auctions/watchlist.html", {"watchlist": my_watchlist})
+
+
+def add_to_watchlist(request, pk, form):
+    if request.method == "POST":
+        if form.is_valid():
+            user = request.user
+            auction = AuctionListing.objects.get(pk=pk)
+            form.save()
+            WatchList.objects.create(user=user, auctions=auction)
+        return render(request, "auctions/watchlist.html")
+    else:
+        return render(request, "auctions/detail.html", {'watchlist_form': WatchListForm()})
+
