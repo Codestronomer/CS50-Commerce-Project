@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .forms import AuctionListingForm
+from .forms import AuctionListingForm, BidForm
 
 from .models import User, AuctionListing, Comment, Bid
 
@@ -61,6 +61,18 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
+class BidFormView(FormView):
+    form_class = BidForm
+    template_name = "auctions/detail.html"
+
+    def form_valid(self, form):
+        form.save(commit=False)
+        form.instance.auction = AuctionListing.objects.get(pk=self.request.pk)
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+
 class CreateListing(FormView):
     form_class = AuctionListingForm
     template_name = "auctions/create_listing.html"
@@ -87,3 +99,7 @@ class AuctionListingsView(ListView):
 class AuctionListingView(DetailView):
     model = AuctionListing
     template_name = "auctions/detail.html"
+
+
+def watchlist(request):
+    pass

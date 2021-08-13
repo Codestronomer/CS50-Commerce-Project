@@ -5,11 +5,12 @@
     <title>Create Listing</title>
 </head>
 <body>
+    <a href="/"><button class="btn btn-dark">Go back</button></a>
     <h1>Create Listing</h1>
-    <form method="POST" action="">
+    <form method="POST" action="{% url 'create_listing' %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Create listing" />
+        <input class="btn btn-dark" type="submit" value="Create listing" />
     </form>
 </body>
 </html>

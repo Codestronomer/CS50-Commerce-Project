@@ -6,14 +6,6 @@ class User(AbstractUser):
     pass
 
 
-class Bid(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bid')
-    amount = models.FloatField()
-
-    def __str__(self):
-        return f'Bid of {self.amount} made by {self.user}'
-
-
 class AuctionListing(models.Model):
     item = models.CharField(max_length=250)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='auction_listings', blank=True)
@@ -21,12 +13,21 @@ class AuctionListing(models.Model):
     image_url = models.CharField(max_length=300)
     category = models.CharField(max_length=200)
     created = models.DateTimeField(auto_now_add=True)
-    watchlist = models.ManyToManyField(User, blank=True, related_name='watch_listings')
-    starting_bid = models.FloatField()
+    bid = models.IntegerField(default=0)
     is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.item}: {self.bid}'
+
+
+class Bid(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bid')
+    auction = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="auction_listing")
+    amount = models.FloatField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Bid of {self.amount} made by {self.user}'
 
 
 class Comment(models.Model):
@@ -42,3 +43,11 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'comment by {self.user} on {self.listing}'
+
+
+class WatchList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist_user")
+    auctions = models.ManyToManyField(AuctionListing, related_name='auctions_in_the_watchlist', blank=True)
+
+    def __str__(self):
+        return f'watchlist for {self.user}'
