@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.messages import SUCCESS
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from .forms import AuctionListingForm, BidForm, WatchListForm
 
 from .models import User, AuctionListing, Comment, Bid, WatchList
@@ -66,8 +66,14 @@ def bid_form(request, pk):
     if request.method == "POST":
         auction = AuctionListing.objects.get(pk=pk)
         user = User.objects.get(username=request.user)
-
-
+        amount = request.POST.get('amount')
+        bid = Bid.objects.create(user=request.user, auction=auction, amount=amount)
+        auction.bids.add(bid)
+        auction.last_price = bid
+        auction.save()
+        return redirect(reverse("detail", args=[pk]))
+    else:
+        return render(request, "auctions/detail.html", {"bid_form": BidForm()})
 
 
 
