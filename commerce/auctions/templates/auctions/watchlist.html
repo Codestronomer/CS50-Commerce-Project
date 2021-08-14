@@ -6,6 +6,22 @@
     <title>{% block title %}Watchlist{% endblock %}</title>
 </head>
 <body>
-
+    {% block body %}
+        {%  for auction in watchlist.auctions.all %}
+            <h3>{{ auction.item }}</h3>
+            <img src="{{ auction.image_url }}" alt=" " />
+            <span>{{ auction.created }}</span>
+            {% if auction.last_bid %}
+                <p>Current Price: ${{ auction.last_bid }}</p>
+            {% else %}
+                <p>Initial Price: ${{ auction.bid }}</p>
+            {% endif %}
+            <form method="POST" action="{% url 'remove_from_watchlist' auction.pk %}">
+                {% csrf_token %}
+                {{ watchlist_form.as_p }}
+                <button class="btn btn-dark">Remove from Watchlist</button>
+            </form>
+        {% endfor %}
+    {% endblock %}
 </body>
 </html>

@@ -6,10 +6,11 @@ class BidForm(forms.ModelForm):
     class Meta:
         model = Bid
         fields = ('amount', 'user', 'auction')
-        widgets = {
-            'user': forms.HiddenInput(attrs={'class': 'form-control'}),
-            'auction': forms.HiddenInput(attrs={'class': 'form-control'})
-        }
+        # widgets = {
+        #     'amount': forms.IntegerField(),
+        #     'user': forms.HiddenInput(attrs={'class': 'form-control'}),
+        #     'auction': forms.HiddenInput(attrs={'class': 'form-control'})
+        # }
 
 
 class AuctionListingForm(forms.ModelForm):

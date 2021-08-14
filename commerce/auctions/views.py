@@ -2,7 +2,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.generic import FormView, ListView, DetailView
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.contrib.messages import SUCCESS
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from .forms import AuctionListingForm, BidForm, WatchListForm
 
@@ -61,16 +62,13 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-class BidFormView(FormView):
-    form_class = BidForm
-    template_name = "auctions/detail.html"
+def bid_form(request, pk):
+    if request.method == "POST":
+        auction = AuctionListing.objects.get(pk=pk)
+        user = User.objects.get(username=request.user)
 
-    def form_valid(self, form):
-        form.save(commit=False)
-        form.instance.auction = AuctionListing.objects.get(pk=self.request.pk)
-        form.instance.user = self.request.user
-        form.save()
-        return super().form_valid(form)
+
+
 
 
 class CreateListing(FormView):
@@ -117,7 +115,18 @@ def add_to_watchlist(request, pk):
         else:
             watchlist.auctions.add(coming_auction)
             watchlist.save()
-        return HttpResponse('Success')
+        return redirect("/")
     else:
         return render(request, "auctions/detail.html", {'watchlist_form': WatchListForm()})
 
+
+def remove_from_watchlist(request, pk):
+    if request.method == "POST":
+        watchlist = WatchList.objects.get(user=request.user)
+        deleted_auction = AuctionListing.objects.get(pk=pk)
+        if deleted_auction in watchlist.auctions.all():
+            watchlist.auctions.remove(deleted_auction)
+            watchlist.save()
+            return redirect("watchlist")
+    else:
+        return render(request, "auctions/watchlist.html", {'watchlist_form': WatchListForm()})

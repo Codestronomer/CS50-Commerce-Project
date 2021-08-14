@@ -15,6 +15,7 @@ class AuctionListing(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     bid = models.IntegerField(default=0)
     is_closed = models.BooleanField(default=False)
+    bids = models.ManyToManyField('Bid', related_name='bids_in_the_auction', blank=True)
     last_bid = models.ForeignKey('Bid', on_delete=models.CASCADE, related_name='last_bid_for_the_auction', blank=True,
                                  null=True)
 
@@ -25,7 +26,7 @@ class AuctionListing(models.Model):
 class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bid')
     auction = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name="auction_listing")
-    amount = models.FloatField()
+    amount = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
