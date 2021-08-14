@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.generic import FormView, ListView, DetailView
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.messages import SUCCESS
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from .forms import AuctionListingForm, BidForm, WatchListForm
@@ -67,10 +67,15 @@ def bid_form(request, pk):
         auction = AuctionListing.objects.get(pk=pk)
         user = User.objects.get(username=request.user)
         amount = request.POST.get('amount')
-        bid = Bid.objects.create(user=request.user, auction=auction, amount=amount)
-        auction.bids.add(bid)
-        auction.last_price = bid
-        auction.save()
+        if int(amount) < int(auction.last_bid.amount):
+            messages.error(request, "Amount is lower than last bid")
+        elif int(amount) < int(auction.bid):
+            messages.error(request, "Amount is lower than initial bid")
+        else:
+            bid = Bid.objects.create(user=request.user, auction=auction, amount=amount)
+            auction.bids.add(bid)
+            auction.last_bid = bid
+            auction.save()
         return redirect(reverse("detail", args=[pk]))
     else:
         return render(request, "auctions/detail.html", {"bid_form": BidForm()})
@@ -103,6 +108,10 @@ class AuctionListingsView(ListView):
 class AuctionListingView(DetailView):
     model = AuctionListing
     template_name = "auctions/detail.html"
+
+
+def close_auction(request, pk):
+    if request.method == "POST":
 
 
 def watchlist(request):

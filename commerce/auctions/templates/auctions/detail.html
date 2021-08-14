@@ -1,3 +1,4 @@
+{% extends "auctions/layout.html" %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,21 +10,43 @@
         <form method="POST" action="{% url 'add_to_watchlist' pk=object.pk %}">
             {% csrf_token %}
             {{ watchlist_form.as_p }}
-            <input type="submit" value="Add to Watchlist" />
+            <button type="submit" class="btn btn-dark">Add to Watchlist</button>
         </form>
+        <br>
         <img src="{{ object.image_url }}" alt="">
         <h2>{{ object.item }}</h2>
         <span class="badge rounded-pill bg-dark">{{ object.category }}</span>
         <p>{{ object.description }}</p>
-        <span class="badge bg-light text-dark">{{ object.bid }}</span>
+        {% if object.last_bid %}
+            <h4><span class="badge bg-light text-dark">Current Bid - ${{ object.last_bid.amount }}</span></h4>
+        {% else %}
+            <h4><span class="badge bg-light text-dark">Initial Bid: - ${{ object.bid }}</span></h4>
+        {% endif %}
+        {% if object.owner == request.user %}
+            <form method="POST">
+                {% csrf_token %}
+                <button class="btn btn-dark">Close Auction</button>
+            </form>
+        {% endif %}
         {% if object.is_closed == False %}
             <h4>Bid for item</h4>
             <form method="POST" action="{% url 'bid' object.pk %}">
                 {% csrf_token %}
-                <label for="amount" name="amount">amount</label>
-                <input class="form-control" type="number" placeholder="$" name="amount" id="amount">
-                <button type="submit" class="btn btn-dark">Bid</button>
+                <div class="row">
+                    <div class="col-6">
+                        <label for="amount" class="form-label"><b>Amount</b></label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">$</span>
+                            <input class="form-control" type="number" placeholder="" name="amount" id="amount">
+                            <button type="submit" class="btn btn-dark">Place Bid</button>
+                        </div>
+                    </div>
+                </div>
             </form>
+        {% else %}
+            {% if object.last_bid.user == request.user %}
+                <p>Sold to {{ object.request.user }}</p>
+            {% endif %}
         {% endif %}
     {% endblock %}
 </body>
