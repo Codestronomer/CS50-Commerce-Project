@@ -107,14 +107,17 @@ def watchlist(request):
         return render(request, "auctions/watchlist.html", {"watchlist": my_watchlist})
 
 
-def add_to_watchlist(request, pk, form):
+def add_to_watchlist(request, pk):
     if request.method == "POST":
-        if form.is_valid():
-            user = request.user
-            auction = AuctionListing.objects.get(pk=pk)
-            form.save()
-            WatchList.objects.create(user=user, auctions=auction)
-        return render(request, "auctions/watchlist.html")
+        coming_auction = AuctionListing.objects.get(pk=pk)
+        watchlist = WatchList.objects.get(user=request.user)
+        if coming_auction in watchlist.auctions.all():
+            watchlist.auctions.remove(coming_auction)
+            watchlist.save()
+        else:
+            watchlist.auctions.add(coming_auction)
+            watchlist.save()
+        return HttpResponse('Success')
     else:
         return render(request, "auctions/detail.html", {'watchlist_form': WatchListForm()})
 

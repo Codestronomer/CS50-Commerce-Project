@@ -6,7 +6,7 @@
 </head>
 <body>
     {% block body %}
-        <form method="POST" action="add_to_watchlist">
+        <form method="POST" action="{% url 'add_to_watchlist' pk=object.pk %}">
             {% csrf_token %}
             {{ watchlist_form.as_p }}
             <input type="submit" value="Add to Watchlist" />
@@ -18,7 +18,7 @@
         <span class="badge bg-light text-dark">{{ object.bid }}</span>
         {% if object.is_closed == False %}
             <h4>Bid for item</h4>
-            <form method="POST" action="">
+            <form method="POST" action="create_bid">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <input type="button" value="Bid" />

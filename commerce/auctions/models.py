@@ -15,6 +15,8 @@ class AuctionListing(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     bid = models.IntegerField(default=0)
     is_closed = models.BooleanField(default=False)
+    last_bid = models.ForeignKey('Bid', on_delete=models.CASCADE, related_name='last_bid_for_the_auction', blank=True,
+                                 null=True)
 
     def __str__(self):
         return f'{self.item}: {self.bid}'
