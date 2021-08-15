@@ -111,7 +111,11 @@ class AuctionListingView(DetailView):
 
 
 def close_auction(request, pk):
-    if request.method == "POST":
+    if request.method == "GET":
+        auction = AuctionListing.objects.get(pk=pk)
+        auction.is_closed = True
+        auction.save()
+    return redirect(reverse("detail", args=[pk]))
 
 
 def watchlist(request):
