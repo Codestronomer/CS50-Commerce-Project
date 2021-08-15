@@ -22,7 +22,11 @@ class AuctionListingForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('user', 'comment', 'active', 'listing')
+        fields = ('user', 'comment', 'listing')
+        widgets = {
+            'user': forms.HiddenInput(attrs={'class': 'form-control'}),
+            'listing': forms.HiddenInput(attrs={'class': 'form-control'})
+        }
 
 
 class WatchListForm(forms.ModelForm):

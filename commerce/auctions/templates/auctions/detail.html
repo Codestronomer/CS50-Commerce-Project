@@ -51,6 +51,13 @@
                 <p>Item sold to {{ object.last_bid.user }}</p>
             {% endif %}
         {% endif %}
+
+<!--    Comment Section-->
+        <h2>Comments</h2>
+        {% for comment in comments %}
+            <h5>{{ comment.user }}</h5> - <span><i>{{ comment.created_on }}</i></span>
+            &nbsp;&nbsp;<blockquote>{{ comment.comment }}</blockquote>
+        {% endfor %}
     {% endblock %}
 </body>
 </html>

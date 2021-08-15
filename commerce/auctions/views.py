@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import FormView, ListView, DetailView
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
-from .forms import AuctionListingForm, BidForm, WatchListForm
+from .forms import AuctionListingForm, BidForm, WatchListForm, CommentForm
 
 from .models import User, AuctionListing, Comment, Bid, WatchList
 
@@ -149,3 +150,22 @@ def remove_from_watchlist(request, pk):
             return redirect("watchlist")
     else:
         return render(request, "auctions/watchlist.html", {'watchlist_form': WatchListForm()})
+
+
+@login_required()
+def comment_view(request):
+    comments = Comment.objects.all()
+    return render(request, "auctions/index.html", {"comments": comments})
+
+
+def add_comment(request, form, pk):
+    if request.method == "POST":
+        auction = AuctionListing.objects.get(pk=pk)
+        if form.is_valid():
+            form.cleaned_data['user'] = request.user
+            form.cleaned_data['listing'] = auction
+            form.save()
+        return redirect(reverse("detail", args=[pk]))
+    else:
+        return render(request, "auctions/detail.html", {"comment_form": CommentForm()})
+
