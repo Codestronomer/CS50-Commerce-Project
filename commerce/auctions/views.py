@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import FormView, ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -53,6 +54,7 @@ def register(request):
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
+            WatchList.objects.create(user=user)
         except IntegrityError:
             return render(request, "auctions/register.html", {
                 "message": "Username already taken."
@@ -63,6 +65,7 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
+@login_required()
 def bid_form(request, pk):
     if request.method == "POST":
         auction = AuctionListing.objects.get(pk=pk)
@@ -82,7 +85,7 @@ def bid_form(request, pk):
         return render(request, "auctions/detail.html", {"bid_form": BidForm()})
 
 
-class CreateListing(FormView):
+class CreateListing(LoginRequiredMixin, FormView):
     form_class = AuctionListingForm
     template_name = "auctions/create_listing.html"
     success_url = '/'
@@ -119,6 +122,8 @@ class AuctionListingView(DetailView):
         context['comments'] = Comment.objects.all()
         return context
 
+
+@login_required()
 def close_auction(request, pk):
     if request.method == "GET":
         auction = AuctionListing.objects.get(pk=pk)
@@ -127,12 +132,14 @@ def close_auction(request, pk):
     return redirect(reverse("detail", args=[pk]))
 
 
+@login_required()
 def watchlist(request):
     if request.user.is_authenticated:
         my_watchlist = WatchList.objects.get(user=request.user)
         return render(request, "auctions/watchlist.html", {"watchlist": my_watchlist})
 
 
+@login_required()
 def add_to_watchlist(request, pk):
     if request.method == "POST":
         coming_auction = AuctionListing.objects.get(pk=pk)
@@ -148,6 +155,7 @@ def add_to_watchlist(request, pk):
         return render(request, "auctions/detail.html", {'watchlist_form': WatchListForm()})
 
 
+@login_required()
 def remove_from_watchlist(request, pk):
     if request.method == "POST":
         watchlist = WatchList.objects.get(user=request.user)
@@ -160,6 +168,7 @@ def remove_from_watchlist(request, pk):
         return render(request, "auctions/watchlist.html", {'watchlist_form': WatchListForm()})
 
 
+@login_required()
 def add_comment(request, pk):
     if request.method == "POST":
         auction = AuctionListing.objects.get(pk=pk)

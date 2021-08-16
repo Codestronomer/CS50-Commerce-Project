@@ -10,47 +10,56 @@
         <form method="POST" action="{% url 'add_to_watchlist' pk=object.pk %}">
             {% csrf_token %}
             {{ watchlist_form.as_p }}
-            <button type="submit" class="btn btn-dark">Add to Watchlist</button>
+            <button type="submit" class="btn btn-dark">Add to Watchlist <i class="fas fa-cart-plus"></i></button>
         </form>
         <br>
-        <img src="{{ object.image_url }}" alt="">
-        <h2>{{ object.item }}</h2>
-        <span class="badge rounded-pill bg-dark">{{ object.category }}</span>
-        <p>{{ object.description }}</p>
-        {% if object.last_bid %}
-            <h4><span class="badge bg-light text-dark">Current Bid - ${{ object.last_bid.amount }}</span></h4>
-        {% else %}
-            <h4><span class="badge bg-light text-dark">Initial Bid: - ${{ object.bid }}</span></h4>
-        {% endif %}
-        {% if object.owner == request.user %}
-            {% if object.is_closed == False %}
-                <a href="{% url 'close_auction' object.pk %}"><button class="btn btn-dark">Close Auction</button></a>
-            {% else %}
-                <h4>Auction closed</h4>
-            {% endif %}
-        {% endif %}
-        {% if object.is_closed == False %}
-            <h4>Bid for item</h4>
-            <form method="POST" action="{% url 'bid' object.pk %}">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-6">
-                        <label for="amount" class="form-label"><b>Amount</b></label>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">$</span>
-                            <input class="form-control" type="number" placeholder="" name="amount" id="amount">
-                            <button type="submit" class="btn btn-dark">Place Bid</button>
-                        </div>
-                    </div>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <img src="{{ object.image_url }}" alt="" style="height:400px; width:400px;">
                 </div>
-            </form>
-        {% else %}
-            {% if object.last_bid.user == request.user %}
-                <p>Item sold to you</p>
-            {% else %}
-                <p>Item sold to {{ object.last_bid.user }}</p>
-            {% endif %}
-        {% endif %}
+                <div class="col">
+                    <h2>{{ object.item }}</h2>
+                    <span class="badge rounded-pill bg-dark">{{ object.category }}</span>
+                    <p>{{ object.description }}</p>
+                    {% if object.last_bid %}
+                        <h4><span class="badge bg-light text-dark">Current bid - ${{ object.last_bid.amount }}</span></h4>
+                    {% else %}
+                        <h4><span class="badge bg-light text-dark">Initial bid <i class="fas fa-tag"></i> ${{ object.bid }}</span></h4>
+                    {% endif %}
+                    {% if object.owner == request.user %}
+                        {% if object.is_closed == False %}
+                            <a href="{% url 'close_auction' object.pk %}"><button class="btn btn-dark" style="margin-top:10px">Close Auction</button></a>
+                        {% else %}
+                            <h4>Auction closed</h4>
+                        {% endif %}
+                    {% else %}
+                        {% if object.is_closed == False %}
+                            <form method="POST" action="{% url 'bid' object.pk %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-9">
+                                        <label for="amount" class="form-label"><b>Amount</b></label>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text">$</span>
+                                            <input class="form-control" type="number" placeholder="" name="amount" id="amount">
+                                            <button type="submit" class="btn btn-secondary">Place Bid <i class="fas fa-hand-paper"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        {% else %}
+                            {% if object.last_bid.user == request.user %}
+                                <p>Item sold to you</p>
+                            {% else %}
+                                <p>Item sold to {{ object.last_bid.user }}</p>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            </div>
+        </div>
 
 <!--    Comment Section-->
         <hr>
@@ -60,7 +69,7 @@
                 <form method="POST" action="{% url 'add_comment' object.pk %}">
                     {% csrf_token %}
                     <textarea name="comment" class="form-control" rows="4"></textarea>
-                    <button class="btn btn-primary" type="submit" style="margin-top:15px">Comment</button>
+                    <button class="btn btn-secondary" type="submit" style="margin-top:15px">Comment</button>
                 </form>
             </div>
         </div>

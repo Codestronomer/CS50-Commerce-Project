@@ -7,21 +7,42 @@
 </head>
 <body>
     {% block body %}
-        {%  for auction in watchlist.auctions.all %}
-            <h3>{{ auction.item }}</h3>
-            <img src="{{ auction.image_url }}" alt=" " />
-            <span>{{ auction.created }}</span>
-            {% if auction.last_bid %}
-                <p>Current Price: ${{ auction.last_bid }}</p>
-            {% else %}
-                <p>Initial Price: ${{ auction.bid }}</p>
-            {% endif %}
-            <form method="POST" action="{% url 'remove_from_watchlist' auction.pk %}">
-                {% csrf_token %}
-                {{ watchlist_form.as_p }}
-                <button class="btn btn-dark">Remove from Watchlist</button>
-            </form>
-        {% endfor %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Image</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {%  for auction in watchlist.auctions.all %}
+                    <tr>
+                        <th scope="row"><img src="{{ auction.image_url }}" alt="" style="width:150px;height:150px"/></th>
+                        <td><a href="{% url 'detail' auction.pk %}"style="color:black;"><b>{{ auction.item }}</b></a>
+                            <p><i>Created - <span>{{ auction.created }}</span></i></p>
+                        </td>
+                        <td><b>{% if auction.last_bid %}
+                                Current Price: ${{ auction.last_bid }}
+                             {% else %}
+                                Initial Price: ${{ auction.bid }}
+                            {% endif %}</b>
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'remove_from_watchlist' auction.pk %}">
+                                {% csrf_token %}
+                                {{ watchlist_form.as_p }}
+                                <button class="btn btn-dark"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <h2>There's no item in your watchlist</h2>
+                    {% endfor %}
+            </table>
+        </div>
     {% endblock %}
 </body>
 </html>
