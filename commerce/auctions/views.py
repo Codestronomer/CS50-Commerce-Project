@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from .forms import AuctionListingForm, BidForm, WatchListForm, CommentForm
 
-from .models import User, AuctionListing, Comment, Bid, WatchList
+from .models import User, AuctionListing, Comment, Bid, WatchList, Category
 
 
 def login_view(request):
@@ -93,6 +93,11 @@ class CreateListing(FormView):
         form.save()
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
 
 class AuctionListingsView(ListView):
     model = AuctionListing
@@ -167,5 +172,9 @@ def add_comment(request, pk):
 
 
 def category_view(request):
-
-
+    if request.method == "POST":
+        category = request.POST.get('category')
+        active_listing = AuctionListing.objects.filter(category=category)
+        return render(request, 'auctions/index.html', {'active_listing': active_listing})
+    else:
+        return render(request, 'auctions/category.html', {'listing': AuctionListing.objects.filter(is_closed=False)})

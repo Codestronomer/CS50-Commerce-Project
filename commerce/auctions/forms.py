@@ -10,7 +10,7 @@ class BidForm(forms.Form):
 class AuctionListingForm(forms.ModelForm):
     class Meta:
         model = AuctionListing
-        fields = ('item', 'description', 'image_url', 'owner', 'category', 'bid', 'is_closed')
+        fields = ('item', 'description', 'image_url', 'owner', 'category', 'bid')
         widgets = {
             'item': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.TextInput(attrs={'class': 'form-control'}),

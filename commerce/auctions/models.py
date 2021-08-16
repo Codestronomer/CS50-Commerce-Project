@@ -6,12 +6,19 @@ class User(AbstractUser):
     pass
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
 class AuctionListing(models.Model):
     item = models.CharField(max_length=250)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='auction_listings', blank=True)
     description = models.TextField()
     image_url = models.CharField(max_length=300)
-    category = models.CharField(max_length=200)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, related_name="category_for_listing")
     created = models.DateTimeField(auto_now_add=True)
     bid = models.IntegerField(default=0)
     is_closed = models.BooleanField(default=False)
