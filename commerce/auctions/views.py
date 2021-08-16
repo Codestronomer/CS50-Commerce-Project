@@ -82,7 +82,6 @@ def bid_form(request, pk):
         return render(request, "auctions/detail.html", {"bid_form": BidForm()})
 
 
-
 class CreateListing(FormView):
     form_class = AuctionListingForm
     template_name = "auctions/create_listing.html"
@@ -110,6 +109,10 @@ class AuctionListingView(DetailView):
     model = AuctionListing
     template_name = "auctions/detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = Comment.objects.all()
+        return context
 
 def close_auction(request, pk):
     if request.method == "GET":
@@ -152,20 +155,17 @@ def remove_from_watchlist(request, pk):
         return render(request, "auctions/watchlist.html", {'watchlist_form': WatchListForm()})
 
 
-@login_required()
-def comment_view(request):
-    comments = Comment.objects.all()
-    return render(request, "auctions/index.html", {"comments": comments})
-
-
-def add_comment(request, form, pk):
+def add_comment(request, pk):
     if request.method == "POST":
         auction = AuctionListing.objects.get(pk=pk)
-        if form.is_valid():
-            form.cleaned_data['user'] = request.user
-            form.cleaned_data['listing'] = auction
-            form.save()
+        comment = request.POST.get('comment')
+        user = request.user
+        Comment.objects.create(user=user, comment=comment, listing=auction)
         return redirect(reverse("detail", args=[pk]))
     else:
         return render(request, "auctions/detail.html", {"comment_form": CommentForm()})
+
+
+def category_view(request):
+
 

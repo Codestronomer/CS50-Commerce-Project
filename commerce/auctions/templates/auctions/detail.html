@@ -53,10 +53,20 @@
         {% endif %}
 
 <!--    Comment Section-->
+        <hr>
         <h2>Comments</h2>
-        {% for comment in comments %}
-            <h5>{{ comment.user }}</h5> - <span><i>{{ comment.created_on }}</i></span>
-            &nbsp;&nbsp;<blockquote>{{ comment.comment }}</blockquote>
+        <div class="row">
+            <div class="col-7">
+                <form method="POST" action="{% url 'add_comment' object.pk %}">
+                    {% csrf_token %}
+                    <textarea name="comment" class="form-control" rows="4"></textarea>
+                    <button class="btn btn-primary" type="submit" style="margin:15px">Comment</button>
+                </form>
+            </div>
+        </div>
+        {% for c in comments %}
+            <h5>{{ c.user|title }}</h5> - <span><i>{{ c.created_on }}</i></span>
+            &nbsp;&nbsp;<blockquote>{{ c.comment }}</blockquote>
         {% endfor %}
     {% endblock %}
 </body>
