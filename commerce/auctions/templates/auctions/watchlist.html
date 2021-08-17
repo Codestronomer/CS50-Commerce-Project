@@ -25,7 +25,7 @@
                             <p><i>Created - <span>{{ auction.created }}</span></i></p>
                         </td>
                         <td><b>{% if auction.last_bid %}
-                                Current Price: ${{ auction.last_bid }}
+                                Current Price: ${{ auction.last_bid.amount }}
                              {% else %}
                                 Initial Price: ${{ auction.bid }}
                             {% endif %}</b>

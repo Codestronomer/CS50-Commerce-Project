@@ -7,10 +7,30 @@
 </head>
 <body>
     {% block body %}
-        <h2>CATEGORIES</h2>
-        {% for obj in listings %}
-            <li>{{ obj.category }}</li>
-        {% endfor %}
+        <h2>{{ category_name|title }}</h2>
+        {% if listings %}
+            <div class="container">
+                <div class="row">
+                    {% for obj in listings %}
+                    <div class="col-3">
+                        <div class="card" style="height:27rem; margin-bottom:15px">
+                            <div class="card-img-top">
+                                <img src="{{ obj.image_url }}" alt="" class="img-fluid" style="height:250px; width:100%;/>
+                            </div>
+                            <div class="card-body">
+                                <div class="container">
+                                    <h5 class="card-title"><a href="{% url 'detail' obj.pk %}">{{ obj.item|truncatechars:38 }}</a></h5>
+                                    <h4><span class="badge bg-light text-dark">US ${{ obj.bid }}</span></h4>
+                                    <a href="{% url 'category' obj.category.pk %}"><span class="badge rounded-pill bg-dark">{{ obj.category }}</span></a>
+                                    <p class="card-text">{{ obj.description|truncatechars:30 }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     {% endblock %}
 </body>
 </html>

@@ -23,7 +23,7 @@
                     <span class="badge rounded-pill bg-dark">{{ object.category }}</span>
                     <p>{{ object.description }}</p>
                     {% if object.last_bid %}
-                        <h4><span class="badge bg-light text-dark">Current bid - ${{ object.last_bid.amount }}</span></h4>
+                        <h4><span class="badge bg-light text-dark">Current bid <i class="fas fa-tag"></i> ${{ object.last_bid.amount }}</span></h4>
                     {% else %}
                         <h4><span class="badge bg-light text-dark">Initial bid <i class="fas fa-tag"></i> ${{ object.bid }}</span></h4>
                     {% endif %}
@@ -73,9 +73,12 @@
                 </form>
             </div>
         </div>
+        <br>
         {% for c in comments %}
-            <h5>{{ c.user|title }}</h5> - <span><i>{{ c.created_on }}</i></span>
-            &nbsp;&nbsp;<blockquote>{{ c.comment }}</blockquote>
+            {% if c.listing.pk == object.pk %}
+                <h6>{{ c.user|title }}</h6> - <span><i>{{ c.created_on }}</i></span>
+                &nbsp;&nbsp;<blockquote>{{ c.comment }}</blockquote>
+            {% endif %}
         {% endfor %}
     {% endblock %}
 </body>

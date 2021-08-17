@@ -71,10 +71,17 @@ def bid_form(request, pk):
         auction = AuctionListing.objects.get(pk=pk)
         user = User.objects.get(username=request.user)
         amount = request.POST.get('amount')
-        if int(amount) < int(auction.last_bid.amount):
-            messages.error(request, "Amount is lower than last bid")
-        elif int(amount) < int(auction.bid):
-            messages.error(request, "Amount is lower than initial bid")
+        if auction.last_bid:
+            if int(amount) < int(auction.last_bid.amount):
+                messages.error(request, "Amount is lower than last bid")
+            elif int(amount) < int(auction.bid):
+                messages.error(request, "Amount is lower than initial bid")
+            else:
+                bid = Bid.objects.create(user=request.user, auction=auction, amount=amount)
+                auction.bids.add(bid)
+                auction.last_bid = bid
+                auction.save()
+            return redirect(reverse("detail", args=[pk]))
         else:
             bid = Bid.objects.create(user=request.user, auction=auction, amount=amount)
             auction.bids.add(bid)
@@ -110,7 +117,10 @@ class AuctionListingsView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['listings'] = context['listings'].filter(is_closed=False)
+        context['categories'] = Category.objects.all()
         return context
+
+
 
 
 class AuctionListingView(DetailView):
@@ -180,10 +190,7 @@ def add_comment(request, pk):
         return render(request, "auctions/detail.html", {"comment_form": CommentForm()})
 
 
-def category_view(request):
-    if request.method == "POST":
-        category = request.POST.get('category')
-        active_listing = AuctionListing.objects.filter(category=category)
-        return render(request, 'auctions/index.html', {'active_listing': active_listing})
-    else:
-        return render(request, 'auctions/category.html', {'listing': AuctionListing.objects.filter(is_closed=False)})
+def category_view(request, pk):
+    category_name = Category.objects.get(pk=pk)
+    active_listing = AuctionListing.objects.filter(is_closed=False, category=category_name)
+    return render(request, 'auctions/category.html', {'listings': active_listing, 'category_name': category_name})

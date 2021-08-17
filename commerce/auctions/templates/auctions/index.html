@@ -16,16 +16,16 @@
         <div class="row">
             {% for obj in listings %}
             <div class="col-3">
-                <div class="card" style="height:27rem">
+                <div class="card" style="height:27rem; margin-bottom:15px">
                     <div class="card-img-top">
                         <img src="{{ obj.image_url }}" alt="" class="img-fluid" style="height:250px; width:100%;/>
                     </div>
                     <div class="card-body">
                         <div class="container">
-                            <h3 class="card-title"><a href="{% url 'detail' obj.pk %}">{{ obj.item|truncatechars:17 }}</a></h3>
-                            <span class="badge rounded-pill bg-dark">{{ obj.category }}</span>
+                            <h5 class="card-title"><a href="{% url 'detail' obj.pk %}">{{ obj.item|truncatechars:38 }}</a></h5>
+                            <h4><span class="badge bg-light text-dark">US ${{ obj.bid }}</span></h4>
+                            <a href="{% url 'category' obj.category.pk %}"><span class="badge rounded-pill bg-dark">{{ obj.category }}</span></a>
                             <p class="card-text">{{ obj.description|truncatechars:30 }}</p>
-                            <span class="badge bg-light text-dark">${{ obj.bid }}</span>
                         </div>
                     </div>
                 </div>
