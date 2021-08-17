@@ -11,11 +11,11 @@
         {% if listings %}
             <div class="container">
                 <div class="row">
-                    {% for obj in listings %}
+                {% for obj in listings %}
                     <div class="col-3">
                         <div class="card" style="height:27rem; margin-bottom:15px">
                             <div class="card-img-top">
-                                <img src="{{ obj.image_url }}" alt="" class="img-fluid" style="height:250px; width:100%;/>
+                                <img src="{{ obj.image_url }}" alt="" class="img-fluid" style="height:250px; width:100%;"/>
                             </div>
                             <div class="card-body">
                                 <div class="container">
@@ -27,6 +27,8 @@
                             </div>
                         </div>
                     </div>
+                {% empty %}
+                    <p>No listing for this category.</p>
                 {% endfor %}
                 </div>
             </div>

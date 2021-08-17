@@ -194,3 +194,8 @@ def category_view(request, pk):
     category_name = Category.objects.get(pk=pk)
     active_listing = AuctionListing.objects.filter(is_closed=False, category=category_name)
     return render(request, 'auctions/category.html', {'listings': active_listing, 'category_name': category_name})
+
+
+def category_list(request):
+    categories = Category.objects.all()
+    return render(request, 'auctions/category_list.html', {"categories": categories})
